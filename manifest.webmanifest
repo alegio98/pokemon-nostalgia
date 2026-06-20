@@ -1,0 +1,26 @@
+{
+  "name": "Pokémon Nostalgia — Rosso Fuoco",
+  "short_name": "Pokémon Nostalgia",
+  "description": "Pokédex fan-made nostalgico ispirato a Pokémon Rosso Fuoco.",
+  "lang": "it",
+  "start_url": "./#list",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f4efe5",
+  "theme_color": "#d84b2f",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

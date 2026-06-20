@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2f6736" />
+  <meta name="description" content="Un Pokédex fan-made in stile Pokémon Rosso Fuoco, rapido e pensato per smartphone." />
+  <title>Pokédex Rosso Fuoco</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="site-layout">
+    <section class="intro-panel" aria-labelledby="project-title">
+      <div class="brand-lockup">
+        <div class="brand-main" id="project-title">POKÉDEX</div>
+        <div class="brand-sub"><span class="mini-ball" aria-hidden="true"></span> ROSSO FUOCO</div>
+      </div>
+      <h1>Il Pokédex di sempre.<br />Ora sul tuo telefono.</h1>
+      <p class="intro-copy">Rivivi l’atmosfera di Kanto con un Pokédex ispirato a Rosso Fuoco: essenziale, rapido e sempre a portata di mano.</p>
+      <div class="feature-list" aria-label="Caratteristiche principali">
+        <p><span>◉</span> 151 Pokémon di Kanto</p>
+        <p><span>▣</span> Schede in stile Game Boy Advance</p>
+        <p><span>✦</span> Ricerca, filtri e statistiche</p>
+        <p><span>♥</span> Preferiti e catturati salvati sul dispositivo</p>
+      </div>
+      <button class="primary-cta" id="desktop-open" type="button">APRI IL POKÉDEX</button>
+      <p class="fan-note">Progetto fan-made, non ufficiale e senza pubblicità.</p>
+    </section>
+
+    <section class="device" id="app" aria-label="Applicazione Pokédex">
+      <div class="device-notch" aria-hidden="true"></div>
+
+      <div class="screen" id="list-screen">
+        <header class="app-header">
+          <button class="icon-button ghost" id="menu-button" aria-label="Apri filtri" type="button">☰</button>
+          <div>
+            <h2>POKÉDEX</h2>
+            <span class="eyebrow">ROSSOFUOCO</span>
+          </div>
+          <button class="icon-button ghost letter-button" id="nostalgia-letter-button" aria-label="Lascia una dedica nostalgica" type="button">
+            <img src="./assets/pixel-envelope.svg" alt="" aria-hidden="true" />
+          </button>
+        </header>
+
+        <section class="counter-strip" aria-label="Progressi Pokédex">
+          <div><span>VISTI</span><strong id="seen-count">0</strong></div>
+          <div><span>PRESI</span><strong id="caught-count">0</strong></div>
+          <div><span>FAVORITI</span><strong id="favorite-count">0</strong></div>
+          <div><span>VISITE OGGI</span><strong id="daily-visitors">—</strong></div>
+        </section>
+
+        <section class="search-area">
+          <label class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input id="search-input" type="search" inputmode="search" autocomplete="off" placeholder="Nome o numero…" aria-label="Cerca Pokémon per nome o numero" />
+          </label>
+          <button class="filter-toggle" id="filter-toggle" type="button" aria-expanded="false" aria-controls="filters-panel">FILTRI</button>
+        </section>
+
+        <section class="filters-panel" id="filters-panel" hidden>
+          <div class="filter-row" role="group" aria-label="Filtri raccolta">
+            <button class="filter-chip active" data-collection="all" type="button">TUTTI</button>
+            <button class="filter-chip" data-collection="favorites" type="button">PREFERITI</button>
+            <button class="filter-chip" data-collection="caught" type="button">CATTURATI</button>
+          </div>
+          <p class="filter-label">FILTRA PER TIPO</p>
+          <div class="type-grid" id="type-grid"></div>
+        </section>
+
+        <div class="status-line" id="status-line" role="status">CARICAMENTO DATABASE…</div>
+        <section class="pokemon-list" id="pokemon-list" aria-label="Elenco Pokémon"></section>
+
+        <nav class="bottom-bar" aria-label="Azioni Pokédex">
+          <button id="nav-search" type="button"><kbd>A</kbd> CERCA</button>
+          <button id="nav-filters" type="button"><kbd>START</kbd> FILTRI</button>
+          <button id="install-button" type="button" hidden><kbd>+</kbd> INSTALLA</button>
+        </nav>
+      </div>
+
+      <div class="screen detail-screen" id="detail-screen" hidden>
+        <header class="app-header detail-header">
+          <button class="icon-button ghost" id="back-button" aria-label="Torna al Pokédex" type="button">‹</button>
+          <div>
+            <span class="eyebrow" id="detail-number">N°000</span>
+            <h2 id="detail-name">POKÉMON</h2>
+          </div>
+          <button class="icon-button ghost" id="cry-button" aria-label="Ascolta il verso" type="button" disabled>♪</button>
+        </header>
+
+        <div class="detail-tabs" role="tablist" aria-label="Sezioni scheda Pokémon">
+          <button class="detail-tab active" role="tab" aria-selected="true" data-tab="info" type="button">INFO</button>
+          <button class="detail-tab" role="tab" aria-selected="false" data-tab="stats" type="button">STAT</button>
+          <button class="detail-tab" role="tab" aria-selected="false" data-tab="moves" type="button">MOSSE</button>
+          <button class="detail-tab" role="tab" aria-selected="false" data-tab="description" type="button">DESCR</button>
+        </div>
+
+        <section class="detail-body" id="detail-body">
+          <div class="loading-card">
+            <div class="pixel-loader" aria-hidden="true"></div>
+            <p>SCANSIONE IN CORSO…</p>
+          </div>
+        </section>
+
+        <nav class="bottom-bar detail-bottom" aria-label="Navigazione Pokémon">
+          <button id="previous-pokemon" type="button"><kbd>◀</kbd> PREC.</button>
+          <button id="toggle-caught" type="button"><kbd>A</kbd> PRESO</button>
+          <button id="toggle-favorite" type="button"><kbd>♥</kbd> SALVA</button>
+          <button id="next-pokemon" type="button">SUCC. <kbd>▶</kbd></button>
+        </nav>
+      </div>
+
+
+      <div class="letter-modal" id="letter-modal" hidden>
+        <button class="letter-backdrop" id="letter-backdrop" type="button" aria-label="Chiudi la finestra"></button>
+        <section class="letter-card" role="dialog" aria-modal="true" aria-labelledby="letter-title">
+          <header class="letter-card-header">
+            <img src="./assets/pixel-envelope.svg" alt="" aria-hidden="true" />
+            <div>
+              <span>POSTA ALLENATORI</span>
+              <h3 id="letter-title">LASCIA UNA DEDICA</h3>
+            </div>
+            <button class="letter-close" id="letter-close" type="button" aria-label="Chiudi">×</button>
+          </header>
+          <form class="letter-form" id="letter-form">
+            <p>Scrivi un ricordo, una frase o una dedica legata al tuo viaggio nel mondo Pokémon. Oppure un consiglio per il creatore del progetto!</p>
+            <label>
+              <span>NOME O NICKNAME <small>(FACOLTATIVO)</small></span>
+              <input id="letter-nickname" name="nickname" maxlength="24" autocomplete="nickname" placeholder="Es. Allenatore Rosso" />
+            </label>
+            <label>
+              <span>LA TUA DEDICA</span>
+              <textarea id="letter-message" name="message" minlength="3" maxlength="180" rows="5" required placeholder="Quel giorno in cui ho scelto il mio primo Pokémon…"></textarea>
+            </label>
+            <div class="letter-meta">
+              <span id="letter-status" role="status"></span>
+              <strong><span id="letter-count">0</span>/180</strong>
+            </div>
+            <button class="letter-submit" id="letter-submit" type="submit">SPEDISCI LA LETTERA</button>
+          </form>
+        </section>
+      </div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="legal-footer">
+    Dati forniti da PokéAPI. Pokémon e i relativi nomi e immagini appartengono ai rispettivi titolari. Questo progetto è un tributo fan-made non affiliato a Nintendo, Game Freak o The Pokémon Company.
+  </footer>
+
+  <template id="pokemon-row-template">
+    <button class="pokemon-row" type="button">
+      <span class="row-ball" aria-hidden="true"></span>
+      <span class="pokemon-id"></span>
+      <span class="pokemon-name"></span>
+      <span class="row-badges" aria-hidden="true"></span>
+      <img class="pokemon-sprite" alt="" loading="lazy" decoding="async" />
+      <span class="row-arrow" aria-hidden="true">›</span>
+    </button>
+  </template>
+
+  <script src="./config.js"></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>
