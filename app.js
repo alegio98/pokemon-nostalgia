@@ -22,23 +22,60 @@ const KANTO_NAMES = [
   "Kabutops","Aerodactyl","Snorlax","Articuno","Zapdos","Moltres","Dratini","Dragonair","Dragonite","Mewtwo","Mew"
 ];
 
-const TYPES = [
-  ["normal", "NOR"], ["fire", "FUO"], ["water", "ACQ"], ["electric", "ELE"],
-  ["grass", "ERB"], ["ice", "GHI"], ["fighting", "LOT"], ["poison", "VEL"],
-  ["ground", "TER"], ["flying", "VOL"], ["psychic", "PSI"], ["bug", "COL"],
-  ["rock", "ROC"], ["ghost", "SPE"], ["dragon", "DRA"], ["dark", "BUI"], ["steel", "ACC"]
-];
-
-const TYPE_LABELS = Object.fromEntries([
-  ["normal", "NORMALE"], ["fire", "FUOCO"], ["water", "ACQUA"], ["electric", "ELETTRO"],
-  ["grass", "ERBA"], ["ice", "GHIACCIO"], ["fighting", "LOTTA"], ["poison", "VELENO"],
-  ["ground", "TERRA"], ["flying", "VOLANTE"], ["psychic", "PSICO"], ["bug", "COLEOTTERO"],
-  ["rock", "ROCCIA"], ["ghost", "SPETTRO"], ["dragon", "DRAGO"], ["dark", "BUIO"], ["steel", "ACCIAIO"]
-]);
-
+const DEDICATION_MAX_LENGTH = 360;
+const APP_LANG = getAppLanguage();
+const TYPE_KEYS = ["normal", "fire", "water", "electric", "grass", "ice", "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel"];
+const TYPE_SHORT = {
+  it: { normal: "NOR", fire: "FUO", water: "ACQ", electric: "ELE", grass: "ERB", ice: "GHI", fighting: "LOT", poison: "VEL", ground: "TER", flying: "VOL", psychic: "PSI", bug: "COL", rock: "ROC", ghost: "SPE", dragon: "DRA", dark: "BUI", steel: "ACC" },
+  en: { normal: "NOR", fire: "FIR", water: "WAT", electric: "ELE", grass: "GRA", ice: "ICE", fighting: "FIG", poison: "POI", ground: "GRO", flying: "FLY", psychic: "PSY", bug: "BUG", rock: "ROC", ghost: "GHO", dragon: "DRA", dark: "DAR", steel: "STE" }
+};
+const TYPE_LABELS = {
+  it: { normal: "NORMALE", fire: "FUOCO", water: "ACQUA", electric: "ELETTRO", grass: "ERBA", ice: "GHIACCIO", fighting: "LOTTA", poison: "VELENO", ground: "TERRA", flying: "VOLANTE", psychic: "PSICO", bug: "COLEOTTERO", rock: "ROCCIA", ghost: "SPETTRO", dragon: "DRAGO", dark: "BUIO", steel: "ACCIAIO" },
+  en: { normal: "NORMAL", fire: "FIRE", water: "WATER", electric: "ELECTRIC", grass: "GRASS", ice: "ICE", fighting: "FIGHTING", poison: "POISON", ground: "GROUND", flying: "FLYING", psychic: "PSYCHIC", bug: "BUG", rock: "ROCK", ghost: "GHOST", dragon: "DRAGON", dark: "DARK", steel: "STEEL" }
+};
 const STAT_LABELS = {
-  hp: "PS", attack: "ATTACCO", defense: "DIFESA", "special-attack": "ATT. SPEC",
-  "special-defense": "DIF. SPEC", speed: "VELOCITÀ"
+  it: { hp: "PS", attack: "ATTACCO", defense: "DIFESA", "special-attack": "ATT. SPEC", "special-defense": "DIF. SPEC", speed: "VELOCITÀ" },
+  en: { hp: "HP", attack: "ATTACK", defense: "DEFENSE", "special-attack": "SP. ATK", "special-defense": "SP. DEF", speed: "SPEED" }
+};
+const TYPES = TYPE_KEYS.map(type => [type, typeShort(type)]);
+
+const I18N = {
+  it: {
+    docTitle: "Pokédex Rosso Fuoco",
+    metaDescription: "Un Pokédex fan-made in stile Pokémon Rosso Fuoco, rapido e pensato per smartphone.",
+    fireRed: "ROSSOFUOCO",
+    headline: "Il Pokédex di sempre.<br />Ora sul tuo telefono.",
+    intro: "Rivivi l’atmosfera di Kanto con un Pokédex ispirato a Rosso Fuoco: essenziale, rapido e sempre a portata di mano.",
+    features: ["151 Pokémon di Kanto", "Schede in stile Game Boy Advance", "Ricerca, filtri e statistiche", "Preferiti e catturati salvati sul dispositivo"],
+    openDex: "APRI IL POKÉDEX",
+    fanNote: "Progetto fan-made, non ufficiale e senza pubblicità.",
+    menu: "Apri filtri", letterAria: "Lascia una dedica nostalgica", seen: "VISTI", caught: "PRESI", favorites: "FAVORITI", visitorsToday: "VISITE OGGI",
+    searchPlaceholder: "Nome o numero…", searchAria: "Cerca Pokémon per nome o numero", filters: "FILTRI", all: "TUTTI", favoriteFilter: "PREFERITI", caughtFilter: "CATTURATI", filterByType: "FILTRA PER TIPO",
+    loadingDatabase: "CARICAMENTO DATABASE…", searchAction: "CERCA", install: "INSTALLA", backToDex: "Torna al Pokédex", cry: "Ascolta il verso", info: "INFO", stats: "STAT", moves: "MOSSE", descriptionShort: "DESCR", previous: "PREC.", caughtButton: "PRESO", caughtButtonDone: "PRESO ✓", savedButton: "SALVATO", saveButton: "SALVA", next: "SUCC.",
+    letterMail: "POSTA ALLENATORI", letterTitle: "LASCIA UNA DEDICA", close: "Chiudi", letterIntro: "Scrivi un ricordo, una frase o una dedica legata al tuo viaggio nel mondo Pokémon. La leggerà il creatore del progetto.", nickname: "NOME O NICKNAME", optional: "FACOLTATIVO", nicknamePlaceholder: "Es. Allenatore Rosso", dedication: "LA TUA DEDICA", dedicationPlaceholder: "Quel giorno in cui ho scelto il mio primo Pokémon…", sendLetter: "SPEDISCI LA LETTERA",
+    footer: "Dati forniti da PokéAPI. Pokémon e i relativi nomi e immagini appartengono ai rispettivi titolari. Questo progetto è un tributo fan-made non affiliato a Nintendo, Game Freak o The Pokémon Company.",
+    localMode: "MODALITÀ LOCALE: DATI BASE DISPONIBILI", noPokemon: "NESSUN POKÉMON TROVATO.<br>PROVA UN ALTRO FILTRO.", results: "RISULTATI", scanType: "SCANSIONE TIPO", filterOffline: "Filtro non disponibile senza connessione", scanning: "SCANSIONE IN CORSO…", signalMissing: "SEGNALE POKÉDEX ASSENTE", detailError: "Non riesco a recuperare la scheda completa. Controlla la connessione e riprova.", retry: "RIPROVA",
+    hiddenAbility: "NASC.", frontBack: "FRONTE / RETRO", type: "TIPO", height: "ALTEZZA", weight: "PESO", abilities: "ABILITÀ", pokedexRecord: "REGISTRAZIONE POKÉDEX", evolutionLine: "LINEA EVOLUTIVA", noEvolutionData: "DATI EVOLUZIONE NON DISPONIBILI", baseStats: "STATISTICHE BASE", total: "TOTALE", trainingData: "DATI ALLENAMENTO", baseExp: "ESP. BASE", noMoves: "NESSUNA MOSSA PER LIVELLO TROVATA NEL GRUPPO VERSIONE ROSSO FUOCO / VERDE FOGLIA.", level: "LIV.", movesNote: "Elenco delle mosse apprese salendo di livello nel gruppo versione Rosso Fuoco / Verde Foglia.", dexEntry: "VOCE DEL POKÉDEX", classification: "CLASSIFICAZIONE", typeEffectiveness: "EFFICACIA DEI TIPI", weakTo: "DEBOLE A", resists: "RESISTE A", immuneTo: "IMMUNE A", noRegistration: "NESSUNA REGISTRAZIONE DISPONIBILE.",
+    removedCaught: "Rimosso dai catturati", removedFavorites: "Rimosso dai preferiti", addedCaught: "Pokémon registrato come catturato", addedFavorite: "Pokémon aggiunto ai preferiti", audioUnavailable: "Audio non disponibile", serviceNotLinked: "SERVIZIO NON ANCORA COLLEGATO", serviceInactive: "LA POSTA NON È ANCORA ATTIVA", minChars: "SCRIVI ALMENO 3 CARATTERI", waitMinute: "ASPETTA UN MINUTO PRIMA DI RISPEDIRE", sending: "SPEDIZIONE IN CORSO…", sent: "LETTERA SPEDITA. GRAZIE, ALLENATORE!", received: "Dedica ricevuta", sendError: "ERRORE DI INVIO. RIPROVA TRA POCO"
+  },
+  en: {
+    docTitle: "FireRed Pokédex",
+    metaDescription: "A fan-made Pokémon FireRed style Pokédex, fast, nostalgic and made for smartphones.",
+    fireRed: "FIRERED",
+    headline: "The classic Pokédex feeling.<br />Now on your phone.",
+    intro: "Bring back the Kanto atmosphere with a FireRed-inspired Pokédex: simple, quick and always in your pocket.",
+    features: ["151 Kanto Pokémon", "Game Boy Advance style cards", "Search, filters and stats", "Favorites and caught Pokémon saved on device"],
+    openDex: "OPEN THE POKÉDEX",
+    fanNote: "Fan-made, unofficial and ad-free.",
+    menu: "Open filters", letterAria: "Leave a nostalgic message", seen: "SEEN", caught: "CAUGHT", favorites: "FAVORITES", visitorsToday: "VISITS TODAY",
+    searchPlaceholder: "Name or number…", searchAria: "Search Pokémon by name or number", filters: "FILTERS", all: "ALL", favoriteFilter: "FAVORITES", caughtFilter: "CAUGHT", filterByType: "FILTER BY TYPE",
+    loadingDatabase: "LOADING DATABASE…", searchAction: "SEARCH", install: "INSTALL", backToDex: "Back to Pokédex", cry: "Play cry", info: "INFO", stats: "STATS", moves: "MOVES", descriptionShort: "DESC", previous: "PREV.", caughtButton: "CAUGHT", caughtButtonDone: "CAUGHT ✓", savedButton: "SAVED", saveButton: "SAVE", next: "NEXT",
+    letterMail: "TRAINER MAIL", letterTitle: "LEAVE A MESSAGE", close: "Close", letterIntro: "Write a memory, a line or a dedication connected to your Pokémon journey. The creator of the project will read it.", nickname: "NAME OR NICKNAME", optional: "OPTIONAL", nicknamePlaceholder: "E.g. Trainer Red", dedication: "YOUR MESSAGE", dedicationPlaceholder: "The day I chose my first Pokémon…", sendLetter: "SEND THE LETTER",
+    footer: "Data provided by PokéAPI. Pokémon and their names and images belong to their respective owners. This is an unofficial fan-made tribute and is not affiliated with Nintendo, Game Freak or The Pokémon Company.",
+    localMode: "LOCAL MODE: BASIC DATA AVAILABLE", noPokemon: "NO POKÉMON FOUND.<br>TRY ANOTHER FILTER.", results: "RESULTS", scanType: "SCANNING TYPE", filterOffline: "Filter unavailable without connection", scanning: "SCANNING…", signalMissing: "POKÉDEX SIGNAL LOST", detailError: "I can’t load the full entry. Check your connection and try again.", retry: "RETRY",
+    hiddenAbility: "HIDDEN", frontBack: "FRONT / BACK", type: "TYPE", height: "HEIGHT", weight: "WEIGHT", abilities: "ABILITIES", pokedexRecord: "POKÉDEX RECORD", evolutionLine: "EVOLUTION LINE", noEvolutionData: "EVOLUTION DATA UNAVAILABLE", baseStats: "BASE STATS", total: "TOTAL", trainingData: "TRAINING DATA", baseExp: "BASE EXP.", noMoves: "NO LEVEL-UP MOVES FOUND FOR THE FIRE RED / LEAF GREEN VERSION GROUP.", level: "LV.", movesNote: "List of moves learned by leveling up in the Fire Red / Leaf Green version group.", dexEntry: "POKÉDEX ENTRY", classification: "CLASSIFICATION", typeEffectiveness: "TYPE EFFECTIVENESS", weakTo: "WEAK TO", resists: "RESISTS", immuneTo: "IMMUNE TO", noRegistration: "NO REGISTRATION AVAILABLE.",
+    removedCaught: "Removed from caught", removedFavorites: "Removed from favorites", addedCaught: "Pokémon registered as caught", addedFavorite: "Pokémon added to favorites", audioUnavailable: "Audio unavailable", serviceNotLinked: "SERVICE NOT CONNECTED YET", serviceInactive: "MAIL SERVICE IS NOT ACTIVE YET", minChars: "WRITE AT LEAST 3 CHARACTERS", waitMinute: "WAIT ONE MINUTE BEFORE SENDING AGAIN", sending: "SENDING…", sent: "LETTER SENT. THANK YOU, TRAINER!", received: "Message received", sendError: "SEND ERROR. TRY AGAIN SOON"
+  }
 };
 
 const state = {
@@ -68,6 +105,7 @@ window.addEventListener("DOMContentLoaded", init);
 
 function init() {
   cacheElements();
+  applyStaticLanguage();
   renderTypeButtons();
   bindEvents();
   renderCounters();
@@ -93,7 +131,7 @@ function cacheElements() {
 
 function bindEvents() {
   el.searchInput.addEventListener("input", event => {
-    state.query = event.target.value.trim().toLocaleLowerCase("it");
+    state.query = event.target.value.trim().toLocaleLowerCase(APP_LANG);
     renderList();
   });
   el.filterToggle.addEventListener("click", toggleFilters);
@@ -141,7 +179,7 @@ function renderTypeButtons() {
     button.type = "button";
     button.textContent = short;
     button.dataset.type = type;
-    button.title = TYPE_LABELS[type];
+    button.title = typeLabel(type);
     button.addEventListener("click", () => selectType(type, button));
     fragment.append(button);
   });
@@ -159,7 +197,7 @@ async function hydrateListNames() {
     }));
     renderList();
   } catch (error) {
-    setStatus("MODALITÀ LOCALE: DATI BASE DISPONIBILI");
+    setStatus(t("localMode"));
   }
 }
 
@@ -177,14 +215,14 @@ function renderList() {
     const row = el.rowTemplate.content.firstElementChild.cloneNode(true);
     row.dataset.id = pokemon.id;
     row.querySelector(".pokemon-id").textContent = `N°${pad(pokemon.id)}`;
-    row.querySelector(".pokemon-name").textContent = pokemon.name.toLocaleUpperCase("it");
+    row.querySelector(".pokemon-name").textContent = upper(pokemon.name);
     const badges = [];
     if (state.caught.has(pokemon.id)) badges.push("●");
     if (state.favorites.has(pokemon.id)) badges.push("♥");
     row.querySelector(".row-badges").textContent = badges.join(" ");
     const image = row.querySelector(".pokemon-sprite");
     image.src = spriteUrl(pokemon.id);
-    image.alt = `Sprite di ${pokemon.name}`;
+    image.alt = `Sprite of ${pokemon.name}`;
     image.addEventListener("error", handleSpriteError);
     row.addEventListener("click", () => openPokemon(pokemon.id));
     fragment.append(row);
@@ -193,12 +231,12 @@ function renderList() {
   if (!filtered.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.innerHTML = "NESSUN POKÉMON TROVATO.<br>PROVA UN ALTRO FILTRO.";
+    empty.innerHTML = t("noPokemon");
     fragment.append(empty);
   }
 
   el.pokemonList.replaceChildren(fragment);
-  setStatus(`${filtered.length} RISULTATI · KANTO N°001–151`);
+  setStatus(`${filtered.length} ${t("results")} · KANTO N°001–151`);
 }
 
 function toggleFilters() {
@@ -218,7 +256,7 @@ async function selectType(type, button) {
 
   state.selectedType = type;
   document.querySelectorAll(".type-chip").forEach(item => item.classList.toggle("active", item === button));
-  setStatus(`SCANSIONE TIPO ${TYPE_LABELS[type]}…`);
+  setStatus(`${t("scanType")} ${typeLabel(type)}…`);
 
   try {
     if (!state.typeCache.has(type)) {
@@ -229,7 +267,7 @@ async function selectType(type, button) {
     state.typeIds = state.typeCache.get(type).ids;
   } catch (error) {
     state.typeIds = new Set();
-    showToast("Filtro non disponibile senza connessione");
+    showToast(t("filterOffline"));
   }
   renderList();
 }
@@ -256,7 +294,7 @@ function routeFromHash() {
 function showList() {
   el.detailScreen.hidden = true;
   el.listScreen.hidden = false;
-  document.title = "Pokédex Rosso Fuoco";
+  document.title = t("docTitle");
 }
 
 async function showDetail(id) {
@@ -271,21 +309,21 @@ async function showDetail(id) {
   el.listScreen.hidden = true;
   el.detailScreen.hidden = false;
   el.detailNumber.textContent = `N°${pad(id)}`;
-  el.detailName.textContent = KANTO_NAMES[id - 1].toLocaleUpperCase("it");
+  el.detailName.textContent = upper(KANTO_NAMES[id - 1]);
   el.cryButton.disabled = true;
   el.tabs.forEach(tab => {
     const active = tab.dataset.tab === "info";
     tab.classList.toggle("active", active);
     tab.setAttribute("aria-selected", String(active));
   });
-  el.detailBody.innerHTML = `<div class="loading-card"><div class="pixel-loader" aria-hidden="true"></div><p>SCANSIONE IN CORSO…</p></div>`;
-  document.title = `${KANTO_NAMES[id - 1]} · Pokédex Rosso Fuoco`;
+  el.detailBody.innerHTML = `<div class="loading-card"><div class="pixel-loader" aria-hidden="true"></div><p>${t("scanning")}</p></div>`;
+  document.title = `${KANTO_NAMES[id - 1]} · ${t("docTitle")}`;
 
   try {
     const detail = await getPokemonDetail(id);
     if (state.currentId !== id) return;
     state.currentDetail = detail;
-    el.detailName.textContent = detail.name.toLocaleUpperCase("it");
+    el.detailName.textContent = upper(detail.name);
     el.cryButton.disabled = !detail.cry;
     renderCurrentTab();
   } catch (error) {
@@ -293,9 +331,9 @@ async function showDetail(id) {
     state.currentDetail = null;
     el.detailBody.innerHTML = `
       <div class="error-card">
-        <strong>SEGNALE POKÉDEX ASSENTE</strong><br>
-        Non riesco a recuperare la scheda completa. Controlla la connessione e riprova.
-        <br><button type="button" id="retry-detail">RIPROVA</button>
+        <strong>${t("signalMissing")}</strong><br>
+        ${t("detailError")}
+        <br><button type="button" id="retry-detail">${t("retry")}</button>
       </div>`;
     document.getElementById("retry-detail").addEventListener("click", () => {
       state.detailCache.delete(id);
@@ -325,8 +363,8 @@ async function getPokemonDetail(id) {
     const matchupPromise = calculateMatchups(pokemon.types.map(entry => entry.type.name)).catch(() => null);
     const [evolutions, matchups] = await Promise.all([evolutionPromise, matchupPromise]);
 
-    const itName = findLocalized(species.names, "it") || KANTO_NAMES[id - 1];
-    const genus = species.genera?.find(entry => entry.language.name === "it")?.genus
+    const localizedName = findLocalized(species.names, APP_LANG) || findLocalized(species.names, "en") || KANTO_NAMES[id - 1];
+    const genus = species.genera?.find(entry => entry.language.name === APP_LANG)?.genus
       || species.genera?.find(entry => entry.language.name === "en")?.genus
       || "POKÉMON";
     const description = chooseDescription(species.flavor_text_entries);
@@ -336,7 +374,7 @@ async function getPokemonDetail(id) {
 
     return {
       id,
-      name: itName,
+      name: localizedName,
       genus,
       description,
       height: pokemon.height / 10,
@@ -388,31 +426,31 @@ function renderCurrentTab() {
 }
 
 function renderInfoTab(detail) {
-  const abilities = detail.abilities.map(item => `${item.name}${item.hidden ? " (NASC.)" : ""}`).join(" / ");
+  const abilities = detail.abilities.map(item => `${item.name}${item.hidden ? ` (${t("hiddenAbility")})` : ""}`).join(" / ");
   const evolutionHtml = detail.evolutions.length
-    ? detail.evolutions.map((entry, index) => `${index ? '<span class="evolution-arrow">›</span>' : ''}<button class="evolution-button" data-evolution-id="${entry.id}" type="button"><img src="${spriteUrl(entry.id)}" alt="" loading="lazy"><span>${entry.name.toLocaleUpperCase("it")}</span></button>`).join("")
-    : '<span class="notice-card">DATI EVOLUZIONE NON DISPONIBILI</span>';
+    ? detail.evolutions.map((entry, index) => `${index ? '<span class="evolution-arrow">›</span>' : ''}<button class="evolution-button" data-evolution-id="${entry.id}" type="button"><img src="${spriteUrl(entry.id)}" alt="" loading="lazy"><span>${upper(entry.name)}</span></button>`).join("")
+    : `<span class="notice-card">${t("noEvolutionData")}</span>`;
 
   return `
     <div class="hero-card">
-      <img class="hero-sprite" id="hero-sprite" src="${detail.frontSprite}" data-front="${detail.frontSprite}" data-back="${detail.backSprite}" alt="Sprite di ${escapeHtml(detail.name)}">
-      <button class="sprite-switch" id="sprite-switch" type="button">FRONTE / RETRO</button>
+      <img class="hero-sprite" id="hero-sprite" src="${detail.frontSprite}" data-front="${detail.frontSprite}" data-back="${detail.backSprite}" alt="Sprite of ${escapeHtml(detail.name)}">
+      <button class="sprite-switch" id="sprite-switch" type="button">${t("frontBack")}</button>
     </div>
     <section class="detail-section">
-      <h3>${escapeHtml(detail.genus.toLocaleUpperCase("it"))}</h3>
+      <h3>${escapeHtml(upper(detail.genus))}</h3>
       <div class="data-grid">
-        <div class="data-cell"><span>TIPO</span><strong>${typePills(detail.types)}</strong></div>
-        <div class="data-cell"><span>ALTEZZA</span><strong>${formatDecimal(detail.height)} m</strong></div>
-        <div class="data-cell"><span>PESO</span><strong>${formatDecimal(detail.weight)} kg</strong></div>
-        <div class="data-cell"><span>ABILITÀ</span><strong>${escapeHtml(abilities.toLocaleUpperCase("it"))}</strong></div>
+        <div class="data-cell"><span>${t("type")}</span><strong>${typePills(detail.types)}</strong></div>
+        <div class="data-cell"><span>${t("height")}</span><strong>${formatDecimal(detail.height)} m</strong></div>
+        <div class="data-cell"><span>${t("weight")}</span><strong>${formatDecimal(detail.weight)} kg</strong></div>
+        <div class="data-cell"><span>${t("abilities")}</span><strong>${escapeHtml(upper(abilities))}</strong></div>
       </div>
     </section>
     <section class="detail-section">
-      <h3>REGISTRAZIONE POKÉDEX</h3>
+      <h3>${t("pokedexRecord")}</h3>
       <div class="description-box">${escapeHtml(detail.description)}</div>
     </section>
     <section class="detail-section">
-      <h3>LINEA EVOLUTIVA</h3>
+      <h3>${t("evolutionLine")}</h3>
       <div class="evolution-row">${evolutionHtml}</div>
     </section>
     ${renderMatchups(detail.matchups)}
@@ -423,47 +461,47 @@ function renderStatsTab(detail) {
   const total = detail.stats.reduce((sum, stat) => sum + stat.value, 0);
   return `
     <section class="detail-section" style="margin-top:0">
-      <h3>STATISTICHE BASE</h3>
+      <h3>${t("baseStats")}</h3>
       <div class="stat-list">
         ${detail.stats.map(stat => `
           <div class="stat-row">
-            <span class="stat-name">${STAT_LABELS[stat.name] || formatSlug(stat.name).toLocaleUpperCase("it")}</span>
+            <span class="stat-name">${statLabel(stat.name)}</span>
             <span class="stat-value">${stat.value}</span>
             <div class="stat-track"><div class="stat-fill" style="width:${Math.min(100, stat.value / 2.55)}%"></div></div>
           </div>`).join("")}
       </div>
-      <div class="total-row"><span>TOTALE</span><span>${total}</span></div>
+      <div class="total-row"><span>${t("total")}</span><span>${total}</span></div>
     </section>
     <section class="detail-section">
-      <h3>DATI ALLENAMENTO</h3>
+      <h3>${t("trainingData")}</h3>
       <div class="data-grid">
-        <div class="data-cell"><span>ESP. BASE</span><strong>${detail.baseExperience ?? "—"}</strong></div>
-        <div class="data-cell"><span>TIPO</span><strong>${typePills(detail.types)}</strong></div>
+        <div class="data-cell"><span>${t("baseExp")}</span><strong>${detail.baseExperience ?? "—"}</strong></div>
+        <div class="data-cell"><span>${t("type")}</span><strong>${typePills(detail.types)}</strong></div>
       </div>
     </section>`;
 }
 
 function renderMovesTab(detail) {
-  if (!detail.moves.length) return `<div class="notice-card">NESSUNA MOSSA PER LIVELLO TROVATA NEL GRUPPO VERSIONE ROSSO FUOCO / VERDE FOGLIA.</div>`;
+  if (!detail.moves.length) return `<div class="notice-card">${t("noMoves")}</div>`;
   return `
     <div class="move-list">
       ${detail.moves.map(move => `
         <div class="move-row">
-          <span class="move-level">LIV. ${String(move.level).padStart(2, "0")}</span>
-          <span class="move-name">${escapeHtml(formatSlug(move.name).toLocaleUpperCase("it"))}</span>
+          <span class="move-level">${t("level")} ${String(move.level).padStart(2, "0")}</span>
+          <span class="move-name">${escapeHtml(upper(formatSlug(move.name)))}</span>
         </div>`).join("")}
     </div>
-    <p class="notice-card">Elenco delle mosse apprese salendo di livello nel gruppo versione Rosso Fuoco / Verde Foglia.</p>`;
+    <p class="notice-card">${t("movesNote")}</p>`;
 }
 
 function renderDescriptionTab(detail) {
   return `
     <section class="detail-section" style="margin-top:0">
-      <h3>VOCE DEL POKÉDEX</h3>
+      <h3>${t("dexEntry")}</h3>
       <div class="description-box" style="min-height:230px">${escapeHtml(detail.description)}</div>
     </section>
     <section class="detail-section">
-      <h3>CLASSIFICAZIONE</h3>
+      <h3>${t("classification")}</h3>
       <div class="description-box">${escapeHtml(detail.genus)}<br><br>${typePills(detail.types)}</div>
     </section>`;
 }
@@ -484,14 +522,14 @@ function toggleSpriteSide() {
 
 function renderMatchups(matchups) {
   if (!matchups) return "";
-  const group = (label, values, multiplier) => values.length ? `<div class="matchup-group"><strong>${label}</strong>${values.map(type => `<span class="type-pill type-${type}">${TYPE_LABELS[type]}${multiplier}</span>`).join("")}</div>` : "";
+  const group = (label, values, multiplier) => values.length ? `<div class="matchup-group"><strong>${label}</strong>${values.map(type => `<span class="type-pill type-${type}">${typeLabel(type)}${multiplier}</span>`).join("")}</div>` : "";
   return `
     <section class="detail-section">
-      <h3>EFFICACIA DEI TIPI</h3>
+      <h3>${t("typeEffectiveness")}</h3>
       <div class="matchup-list">
-        ${group("DEBOLE A", matchups.weak, " ×2")}
-        ${group("RESISTE A", matchups.resist, " ×½")}
-        ${group("IMMUNE A", matchups.immune, " ×0")}
+        ${group(t("weakTo"), matchups.weak, " ×2")}
+        ${group(t("resists"), matchups.resist, " ×½")}
+        ${group(t("immuneTo"), matchups.immune, " ×0")}
       </div>
     </section>`;
 }
@@ -547,7 +585,7 @@ async function getLocalizedAbility(resource) {
   if (state.abilityCache.has(resource.name)) return state.abilityCache.get(resource.name);
   const fallback = formatSlug(resource.name);
   const promise = fetchJson(resource.url, 7000)
-    .then(data => findLocalized(data.names, "it") || findLocalized(data.names, "en") || fallback)
+    .then(data => findLocalized(data.names, APP_LANG) || findLocalized(data.names, "en") || fallback)
     .catch(() => fallback);
   state.abilityCache.set(resource.name, promise);
   const name = await promise;
@@ -557,23 +595,23 @@ async function getLocalizedAbility(resource) {
 
 function chooseDescription(entries = []) {
   const priority = [
-    entry => entry.language.name === "it" && entry.version.name === "firered",
-    entry => entry.language.name === "it",
+    entry => entry.language.name === APP_LANG && entry.version.name === "firered",
+    entry => entry.language.name === APP_LANG,
     entry => entry.language.name === "en" && entry.version.name === "firered",
     entry => entry.language.name === "en"
   ];
   const found = priority.map(test => entries.find(test)).find(Boolean);
-  return found ? found.flavor_text.replace(/[\n\f\r]+/g, " ").replace(/\s+/g, " ").trim() : "NESSUNA REGISTRAZIONE DISPONIBILE.";
+  return found ? found.flavor_text.replace(/[\n\f\r]+/g, " ").replace(/\s+/g, " ").trim() : t("noRegistration");
 }
 
 function toggleSetItem(key, id) {
   const set = state[key];
   if (set.has(id)) {
     set.delete(id);
-    showToast(key === "caught" ? "Rimosso dai catturati" : "Rimosso dai preferiti");
+    showToast(key === "caught" ? t("removedCaught") : t("removedFavorites"));
   } else {
     set.add(id);
-    showToast(key === "caught" ? "Pokémon registrato come catturato" : "Pokémon aggiunto ai preferiti");
+    showToast(key === "caught" ? t("addedCaught") : t("addedFavorite"));
   }
   saveSet(key === "caught" ? "rf-caught" : "rf-favorites", set);
   renderCounters();
@@ -586,8 +624,8 @@ function updateActionButtons() {
   const favorite = state.favorites.has(state.currentId);
   el.toggleCaught.classList.toggle("active", caught);
   el.toggleFavorite.classList.toggle("active", favorite);
-  el.toggleCaught.innerHTML = `<kbd>A</kbd> ${caught ? "PRESO ✓" : "PRESO"}`;
-  el.toggleFavorite.innerHTML = `<kbd>♥</kbd> ${favorite ? "SALVATO" : "SALVA"}`;
+  el.toggleCaught.innerHTML = `<kbd>A</kbd> ${caught ? t("caughtButtonDone") : t("caughtButton")}`;
+  el.toggleFavorite.innerHTML = `<kbd>♥</kbd> ${favorite ? t("savedButton") : t("saveButton")}`;
 }
 
 function renderCounters() {
@@ -600,7 +638,7 @@ function playCry() {
   if (!state.currentDetail?.cry) return;
   const audio = new Audio(state.currentDetail.cry);
   audio.volume = .42;
-  audio.play().catch(() => showToast("Audio non disponibile"));
+  audio.play().catch(() => showToast(t("audioUnavailable")));
 }
 
 
@@ -654,7 +692,7 @@ async function registerDailyVisit() {
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const count = await response.json();
-    el.dailyVisitors.textContent = Number(count || 0).toLocaleString("it-IT");
+    el.dailyVisitors.textContent = Number(count || 0).toLocaleString(appLocale());
     state.backendReady = true;
   } catch (error) {
     el.dailyVisitors.textContent = "—";
@@ -665,7 +703,7 @@ function openLetterModal() {
   el.letterModal.hidden = false;
   el.letterStatus.textContent = backendIsConfigured()
     ? ""
-    : "SERVIZIO NON ANCORA COLLEGATO";
+    : t("serviceNotLinked");
   updateLetterCounter();
   setTimeout(() => el.letterNickname.focus(), 50);
 }
@@ -682,27 +720,27 @@ function updateLetterCounter() {
 async function submitDedication(event) {
   event.preventDefault();
   const nickname = el.letterNickname.value.trim().slice(0, 24);
-  const message = el.letterMessage.value.trim().slice(0, 180);
+  const message = el.letterMessage.value.trim().slice(0, DEDICATION_MAX_LENGTH);
 
   if (message.length < 3) {
-    el.letterStatus.textContent = "SCRIVI ALMENO 3 CARATTERI";
+    el.letterStatus.textContent = t("minChars");
     el.letterMessage.focus();
     return;
   }
 
   if (!backendIsConfigured()) {
-    el.letterStatus.textContent = "LA POSTA NON È ANCORA ATTIVA";
+    el.letterStatus.textContent = t("serviceInactive");
     return;
   }
 
   const lastSent = Number(localStorage.getItem("pokemon-nostalgia-last-letter") || 0);
   if (Date.now() - lastSent < 60000) {
-    el.letterStatus.textContent = "ASPETTA UN MINUTO PRIMA DI RISPEDIRE";
+    el.letterStatus.textContent = t("waitMinute");
     return;
   }
 
   el.letterSubmit.disabled = true;
-  el.letterStatus.textContent = "SPEDIZIONE IN CORSO…";
+  el.letterStatus.textContent = t("sending");
 
   try {
     const { url } = getBackendConfig();
@@ -716,10 +754,10 @@ async function submitDedication(event) {
     localStorage.setItem("pokemon-nostalgia-last-letter", String(Date.now()));
     el.letterForm.reset();
     updateLetterCounter();
-    el.letterStatus.textContent = "LETTERA SPEDITA. GRAZIE, ALLENATORE!";
-    showToast("Dedica ricevuta");
+    el.letterStatus.textContent = t("sent");
+    showToast(t("received"));
   } catch (error) {
-    el.letterStatus.textContent = "ERRORE DI INVIO. RIPROVA TRA POCO";
+    el.letterStatus.textContent = t("sendError");
   } finally {
     el.letterSubmit.disabled = false;
   }
@@ -756,7 +794,7 @@ function findLocalized(names = [], language) {
 }
 
 function typePills(types) {
-  return types.map(type => `<span class="type-pill type-${type}">${TYPE_LABELS[type] || formatSlug(type).toLocaleUpperCase("it")}</span>`).join("");
+  return types.map(type => `<span class="type-pill type-${type}">${typeLabel(type)}</span>`).join("");
 }
 
 function spriteUrl(id, back = false) {
@@ -782,9 +820,106 @@ function setStatus(text) { el.statusLine.textContent = text; }
 
 function showToast(message) {
   clearTimeout(toastTimer);
-  el.toast.textContent = message.toLocaleUpperCase("it");
+  el.toast.textContent = upper(message);
   el.toast.classList.add("show");
   toastTimer = setTimeout(() => el.toast.classList.remove("show"), 2200);
+}
+
+
+function getAppLanguage() {
+  const params = new URLSearchParams(location.search);
+  const forced = params.get("lang") || localStorage.getItem("pokemon-nostalgia-lang") || "";
+  if (/^it\b/i.test(forced)) return "it";
+  if (/^en\b/i.test(forced)) return "en";
+  return /^it\b/i.test(navigator.language || "") ? "it" : "en";
+}
+
+function t(key) {
+  return I18N[APP_LANG]?.[key] ?? I18N.en[key] ?? I18N.it[key] ?? key;
+}
+
+function appLocale() {
+  return APP_LANG === "it" ? "it-IT" : "en-US";
+}
+
+function upper(value) {
+  return String(value).toLocaleUpperCase(APP_LANG === "it" ? "it" : "en");
+}
+
+function typeLabel(type) {
+  return TYPE_LABELS[APP_LANG]?.[type] || TYPE_LABELS.en[type] || upper(formatSlug(type));
+}
+
+function typeShort(type) {
+  return TYPE_SHORT[APP_LANG]?.[type] || TYPE_SHORT.en[type] || upper(String(type).slice(0, 3));
+}
+
+function statLabel(name) {
+  return STAT_LABELS[APP_LANG]?.[name] || STAT_LABELS.en[name] || upper(formatSlug(name));
+}
+
+function applyStaticLanguage() {
+  document.documentElement.lang = APP_LANG;
+  document.title = t("docTitle");
+  document.querySelector('meta[name="description"]')?.setAttribute("content", t("metaDescription"));
+
+  const brandSub = document.querySelector(".brand-sub");
+  if (brandSub) brandSub.innerHTML = `<span class="mini-ball" aria-hidden="true"></span> ${t("fireRed")}`;
+  const introTitle = document.querySelector(".intro-panel h1");
+  if (introTitle) introTitle.innerHTML = t("headline");
+  const introCopy = document.querySelector(".intro-copy");
+  if (introCopy) introCopy.textContent = t("intro");
+  document.querySelectorAll(".feature-list p").forEach((item, index) => {
+    const icon = item.querySelector("span")?.outerHTML || "";
+    item.innerHTML = `${icon} ${t("features")[index] || item.textContent}`;
+  });
+  if (el.desktopOpen) el.desktopOpen.textContent = t("openDex");
+  const fanNote = document.querySelector(".fan-note");
+  if (fanNote) fanNote.textContent = t("fanNote");
+  const legal = document.querySelector(".legal-footer");
+  if (legal) legal.textContent = t("footer");
+
+  el.menuButton?.setAttribute("aria-label", t("menu"));
+  el.nostalgiaLetterButton?.setAttribute("aria-label", t("letterAria"));
+  document.querySelector("#list-screen .app-header h2").textContent = "POKÉDEX";
+  document.querySelector("#list-screen .app-header .eyebrow").textContent = t("fireRed");
+  const counters = [t("seen"), t("caught"), t("favorites"), t("visitorsToday")];
+  document.querySelectorAll(".counter-strip span").forEach((item, index) => { item.textContent = counters[index] || item.textContent; });
+  el.searchInput.placeholder = t("searchPlaceholder");
+  el.searchInput.setAttribute("aria-label", t("searchAria"));
+  el.filterToggle.textContent = t("filters");
+  document.querySelector('[data-collection="all"]').textContent = t("all");
+  document.querySelector('[data-collection="favorites"]').textContent = t("favoriteFilter");
+  document.querySelector('[data-collection="caught"]').textContent = t("caughtFilter");
+  document.querySelector(".filter-label").textContent = t("filterByType");
+  el.statusLine.textContent = t("loadingDatabase");
+  el.navSearch.innerHTML = `<kbd>A</kbd> ${t("searchAction")}`;
+  el.navFilters.innerHTML = `<kbd>START</kbd> ${t("filters")}`;
+  el.installButton.innerHTML = `<kbd>+</kbd> ${t("install")}`;
+
+  el.backButton?.setAttribute("aria-label", t("backToDex"));
+  el.cryButton?.setAttribute("aria-label", t("cry"));
+  const tabLabels = { info: t("info"), stats: t("stats"), moves: t("moves"), description: t("descriptionShort") };
+  el.tabs.forEach(tab => { tab.textContent = tabLabels[tab.dataset.tab] || tab.textContent; });
+  el.previousPokemon.innerHTML = `<kbd>◀</kbd> ${t("previous")}`;
+  el.nextPokemon.innerHTML = `${t("next")} <kbd>▶</kbd>`;
+
+  const modal = el.letterModal;
+  if (modal) {
+    modal.querySelector(".letter-backdrop")?.setAttribute("aria-label", t("close"));
+    modal.querySelector(".letter-card-header span").textContent = t("letterMail");
+    modal.querySelector("#letter-title").textContent = t("letterTitle");
+    modal.querySelector(".letter-close")?.setAttribute("aria-label", t("close"));
+    modal.querySelector(".letter-form > p").textContent = t("letterIntro");
+    modal.querySelector('label:nth-of-type(1) > span').innerHTML = `${t("nickname")} <small>(${t("optional")})</small>`;
+    el.letterNickname.placeholder = t("nicknamePlaceholder");
+    modal.querySelector('label:nth-of-type(2) > span').textContent = t("dedication");
+    el.letterMessage.placeholder = t("dedicationPlaceholder");
+    el.letterMessage.maxLength = DEDICATION_MAX_LENGTH;
+    modal.querySelector(".letter-meta strong").innerHTML = `<span id="letter-count">0</span>/${DEDICATION_MAX_LENGTH}`;
+    el.letterCount = document.getElementById("letter-count");
+    el.letterSubmit.textContent = t("sendLetter");
+  }
 }
 
 function loadSet(key) {
@@ -806,7 +941,7 @@ function normalizeName(name) {
 }
 
 function normalizeSearch(value) {
-  return String(value).toLocaleLowerCase("it").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.’'\s_-]+/g, "");
+  return String(value).toLocaleLowerCase(APP_LANG).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.’'\s_-]+/g, "");
 }
 
 function formatSlug(value) {
@@ -814,7 +949,7 @@ function formatSlug(value) {
 }
 
 function formatDecimal(value) {
-  return Number(value).toLocaleString("it-IT", { maximumFractionDigits: 1 });
+  return Number(value).toLocaleString(appLocale(), { maximumFractionDigits: 1 });
 }
 
 function pad(value) { return String(value).padStart(3, "0"); }

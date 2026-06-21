@@ -125,18 +125,18 @@
             <button class="letter-close" id="letter-close" type="button" aria-label="Chiudi">×</button>
           </header>
           <form class="letter-form" id="letter-form">
-            <p>Scrivi un ricordo, una frase o una dedica legata al tuo viaggio nel mondo Pokémon. Oppure un consiglio per il creatore del progetto!</p>
+            <p>Scrivi un ricordo, una frase o una dedica legata al tuo viaggio nel mondo Pokémon. La leggerà il creatore del progetto.</p>
             <label>
               <span>NOME O NICKNAME <small>(FACOLTATIVO)</small></span>
               <input id="letter-nickname" name="nickname" maxlength="24" autocomplete="nickname" placeholder="Es. Allenatore Rosso" />
             </label>
             <label>
               <span>LA TUA DEDICA</span>
-              <textarea id="letter-message" name="message" minlength="3" maxlength="180" rows="5" required placeholder="Quel giorno in cui ho scelto il mio primo Pokémon…"></textarea>
+              <textarea id="letter-message" name="message" minlength="3" maxlength="360" rows="6" required placeholder="Quel giorno in cui ho scelto il mio primo Pokémon…"></textarea>
             </label>
             <div class="letter-meta">
               <span id="letter-status" role="status"></span>
-              <strong><span id="letter-count">0</span>/180</strong>
+              <strong><span id="letter-count">0</span>/360</strong>
             </div>
             <button class="letter-submit" id="letter-submit" type="submit">SPEDISCI LA LETTERA</button>
           </form>

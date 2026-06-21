@@ -7,7 +7,7 @@ create table if not exists public.dediche (
   message text not null,
   created_at timestamptz not null default now(),
   approved boolean not null default false,
-  constraint dediche_message_length check (char_length(message) between 3 and 180),
+  constraint dediche_message_length check (char_length(message) between 3 and 360),
   constraint dediche_nickname_length check (char_length(coalesce(nickname, '')) <= 24)
 );
 
@@ -19,7 +19,7 @@ on public.dediche
 for insert
 to anon
 with check (
-  char_length(message) between 3 and 180
+  char_length(message) between 3 and 360
   and char_length(coalesce(nickname, '')) <= 24
 );
 

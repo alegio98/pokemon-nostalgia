@@ -45,3 +45,8 @@ Nell'app compare il numero stimato di browser/dispositivi unici della giornata.
 Per lo storico, nel dashboard apri la vista `daily_visit_totals`.
 
 Il conteggio è volutamente rispettoso della privacy: usa un identificatore casuale salvato nel browser e non raccoglie indirizzi IP nel codice dell'app.
+
+
+## Aumento limite dediche a 360 caratteri
+
+Se avevi già creato le tabelle con la versione precedente, esegui anche `supabase-migration-dediche-360.sql` nel SQL Editor di Supabase. Aggiorna il vincolo del database e la policy di inserimento da 180 a 360 caratteri.
